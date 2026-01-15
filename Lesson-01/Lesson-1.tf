@@ -7,17 +7,17 @@ resource "aws_instance" "my_Ubuntu" {
 
   tags = {
     Name    = "My Ubuntu Server"
-    Owner   = "Denis Astahov"
+    Owner   = "Sergei Chesnokov"
     Project = "Terraform Lessons"
   }
 }
 
 resource "aws_instance" "my_Amazon" {
-  ami           = "ami-0912d5cf1d5dff99c"
+  ami           = "ami-03a71cec707bfc3d7"
   instance_type = "t3.micro"
 
   tags = {
-    Name    = "My RedHat Server"
+    Name    = "My Amazon Server"
     Owner   = "Sergei Chesnokov"
     Project = "Terraform Lessons"
   }
