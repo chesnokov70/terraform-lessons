@@ -13,12 +13,12 @@ resource "aws_instance" "my_Ubuntu" {
 }
 
 resource "aws_instance" "my_Amazon" {
-  ami           = "ami-03a71cec707bfc3d7"
-  instance_type = "t3.small"
+  ami           = "ami-0912d5cf1d5dff99c"
+  instance_type = "t3.micro"
 
   tags = {
-    Name    = "My Amazon Server"
-    Owner   = "Denis Astahov"
+    Name    = "My RedHat Server"
+    Owner   = "Sergei Chesnokov"
     Project = "Terraform Lessons"
   }
 }
