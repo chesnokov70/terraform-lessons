@@ -3,25 +3,25 @@
 #
 # Build WebServer during Bootstrap
 #
-# Made by Denis Astahov
+# Made by Sergei Chesnokov
 #----------------------------------------------------------
 
 
 provider "aws" {
-  region = "eu-central-1"
+  region = "us-east-1"
 }
 
 resource "aws_default_vpc" "default" {} # This need to be added since AWS Provider v4.29+ to get VPC id
 
 resource "aws_instance" "my_webserver" {
-  ami                    = "ami-03a71cec707bfc3d7"
+  ami                    = "ami-069e612f612be3a2b"
   instance_type          = "t3.micro"
   vpc_security_group_ids = [aws_security_group.my_webserver.id]
   user_data              = file("user_data.sh")
 
   tags = {
     Name  = "Web Server Build by Terraform"
-    Owner = "Denis Astahov"
+    Owner = "Sergei Chesnokov"
   }
 }
 
@@ -54,6 +54,6 @@ resource "aws_security_group" "my_webserver" {
 
   tags = {
     Name  = "Web Server SecurityGroup"
-    Owner = "Denis Astahov"
+    Owner = "Sergei Chesnokov"
   }
 }
