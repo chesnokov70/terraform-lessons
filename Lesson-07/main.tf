@@ -1,58 +1,24 @@
 #----------------------------------------------------------
-# My Terraform
-#
+# Terraform Web Server
 # Build WebServer during Bootstrap
-#
-# Made by Denis Astahov
+# Made by Sergei Chesnokov
 #----------------------------------------------------------
 
-
 provider "aws" {
-  region = "ca-central-1"
+  region = "us-east-1"
 }
 
-resource "aws_default_vpc" "default" {} # This need to be added since AWS Provider v4.29+ to get VPC id
+# Default VPC
+resource "aws_default_vpc" "default" {}
 
-resource "aws_eip" "my_static_ip" {
-  vpc      = true # Need to add in new AWS Provider version
-  instance = aws_instance.my_webserver.id
-  tags = {
-    Name  = "Web Server IP"
-    Owner = "Denis Astahov"
-  }
-}
-
-
-resource "aws_instance" "my_webserver" {
-  ami                    = "ami-07ab3281411d31d04"
-  instance_type          = "t3.micro"
-  vpc_security_group_ids = [aws_security_group.my_webserver.id]
-  user_data = templatefile("user_data.sh.tpl", {
-    f_name = "Denis",
-    l_name = "Astahov",
-    names  = ["Vasya", "Kolya", "Petya", "John", "Donald", "Masha", "Lena", "Katya"]
-  })
-
-  tags = {
-    Name  = "Web Server Build by Terraform"
-    Owner = "Denis Astahov"
-  }
-
-  lifecycle {
-    create_before_destroy = true
-  }
-
-}
-
-
+# Security Group
 resource "aws_security_group" "my_webserver" {
-  name        = "WebServer Security Group"
-  description = "My First SecurityGroup"
-  vpc_id      = aws_default_vpc.default.id # This need to be added since AWS Provider v4.29+ to set VPC id
-
+  name        = "WebServer-SG"
+  description = "Allow SSH, HTTP, HTTPS"
+  vpc_id      = aws_default_vpc.default.id
 
   dynamic "ingress" {
-    for_each = ["80", "443"]
+    for_each = [22, 80, 443]
     content {
       from_port   = ingress.value
       to_port     = ingress.value
@@ -60,7 +26,6 @@ resource "aws_security_group" "my_webserver" {
       cidr_blocks = ["0.0.0.0/0"]
     }
   }
-
 
   egress {
     from_port   = 0
@@ -70,7 +35,46 @@ resource "aws_security_group" "my_webserver" {
   }
 
   tags = {
-    Name  = "Web Server SecurityGroup"
-    Owner = "Denis Astahov"
+    Name  = "WebServer-SG"
+    Owner = "Sergei Chesnokov"
   }
+}
+
+# EC2 Instance
+resource "aws_instance" "my_webserver" {
+  ami           = "ami-069e612f612be3a2b" # RHEL
+  instance_type = "t3.micro"
+  key_name      = "ssh_new_redhat"
+
+  vpc_security_group_ids = [aws_security_group.my_webserver.id]
+
+  user_data = templatefile("user_data.sh.tpl", {
+    f_name = "Sergei"
+    l_name = "Chesnokov"
+    names  = ["Vasya", "Kolya", "Petya", "John", "Donald", "Masha", "Lena", "Katya"]
+  })
+
+  lifecycle {
+    create_before_destroy = true
+  }
+
+  tags = {
+    Name  = "Terraform-WebServer"
+    Owner = "Sergei Chesnokov"
+  }
+}
+
+# Elastic IP
+resource "aws_eip" "web_eip" {
+  domain = "vpc"
+
+  tags = {
+    Name  = "WebServer-EIP"
+    Owner = "Sergei Chesnokov"
+  }
+}
+
+resource "aws_eip_association" "eip_assoc" {
+  instance_id   = aws_instance.my_webserver.id
+  allocation_id = aws_eip.web_eip.id
 }
