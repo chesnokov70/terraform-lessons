@@ -8,24 +8,25 @@
 
 
 provider "aws" {
-  region = "eu-central-1"
+  region = "us-east-1"
 }
 
 resource "aws_default_vpc" "default" {} # This need to be added since AWS Provider v4.29+ to get VPC id
 
 resource "aws_instance" "my_webserver" {
-  ami                    = "ami-03a71cec707bfc3d7"
+  ami                    = "ami-069e612f612be3a2b"
   instance_type          = "t3.micro"
+  key_name      = "ssh_new_redhat"
   vpc_security_group_ids = [aws_security_group.my_webserver.id]
   user_data = templatefile("user_data.sh.tpl", {
-    f_name = "Denis",
-    l_name = "Astahov",
+    f_name = "Sergei",
+    l_name = "Chesnokov",
     names  = ["Vasya", "Kolya", "Petya", "John", "Donald", "Masha"]
   })
 
   tags = {
     Name  = "Web Server Build by Terraform"
-    Owner = "Denis Astahov"
+    Owner = "Sergei Chesnokov"
   }
 }
 
@@ -49,6 +50,15 @@ resource "aws_security_group" "my_webserver" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
+  ingress {
+  from_port   = 22
+  to_port     = 22
+  protocol    = "tcp"
+  cidr_blocks = ["0.0.0.0/0"] # лучше указать свой IP /32
+}
+
+
+
   egress {
     from_port   = 0
     to_port     = 0
@@ -58,6 +68,6 @@ resource "aws_security_group" "my_webserver" {
 
   tags = {
     Name  = "Web Server SecurityGroup"
-    Owner = "Denis Astahov"
+    Owner = "Sergei Chesnokov"
   }
 }

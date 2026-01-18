@@ -3,12 +3,12 @@
 #
 # Build WebServer during Bootstrap
 #
-# Made by Denis Astahov
+# Made by Sergei Chesnokov
 #----------------------------------------------------------
 
 
 provider "aws" {
-  region = "eu-central-1"
+  region = "us-east-1"
 }
 
 resource "aws_default_vpc" "default" {} # This need to be added since AWS Provider v4.29+ to get VPC id
@@ -47,6 +47,6 @@ resource "aws_security_group" "my_webserver" {
 
   tags = {
     Name  = "Dynamic SecurityGroup"
-    Owner = "Denis Astahov"
+    Owner = "Sergei Chesnokov"
   }
 }

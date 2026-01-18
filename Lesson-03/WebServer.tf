@@ -16,6 +16,7 @@ resource "aws_default_vpc" "default" {} # This need to be added since AWS Provid
 resource "aws_instance" "my_webserver" {
   ami                    = "ami-069e612f612be3a2b"
   instance_type          = "t3.micro"
+  key_name      = "ssh_new_redhat"
   vpc_security_group_ids = [aws_security_group.my_webserver.id]
   user_data              = file("user_data.sh")
 
